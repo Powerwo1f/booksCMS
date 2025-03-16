@@ -1,20 +1,20 @@
-import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { UserEntity } from './user.entity';
-import { RoleEntity } from '../../entities/role.entity';
+import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm";
+import { UserEntity } from "./user.entity";
+import { RoleEntity } from "../../entities/role.entity";
 
-@Entity('user_roles')
+@Entity("user_roles")
 export class UserRoleEntity {
-    @PrimaryColumn('uuid')
+    @PrimaryColumn()
     userId: string;
 
-    @PrimaryColumn('uuid')
+    @PrimaryColumn()
     roleId: string;
 
-    @ManyToOne(() => UserEntity, (user) => user.userRoles, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'userId' })
+    @ManyToOne(() => UserEntity, user => user.roles, { onDelete: "CASCADE" })
+    @JoinColumn({ name: "userId" })
     user: UserEntity;
 
-    @ManyToOne(() => RoleEntity, (role) => role.userRoles, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'roleId' })
+    @ManyToOne(() => RoleEntity, role => role.userRoles, { onDelete: "CASCADE" })
+    @JoinColumn({ name: "roleId" })
     role: RoleEntity;
 }

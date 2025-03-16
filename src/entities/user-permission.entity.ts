@@ -10,7 +10,7 @@ export class UserPermissionEntity {
     @PrimaryColumn("uuid")
     permissionId: string;
 
-    @ManyToOne(() => UserEntity, user => user.userPermissions, { onDelete: "CASCADE" })
+    @ManyToOne(() => UserEntity, user => user.permissions, { onDelete: "CASCADE" })
     @JoinColumn({ name: "userId" })
     user: UserEntity;
 

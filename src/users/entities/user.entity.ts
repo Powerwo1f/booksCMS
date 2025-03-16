@@ -1,11 +1,13 @@
-import { ObjectType, Field, ID } from "@nestjs/graphql";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UserPermissionEntity } from "../../entities/user-permission.entity";
+import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { UserRoleEntity } from "./user-role.entity";
 
 @ObjectType()
 @Entity("users")
 export class UserEntity {
     @Field(() => ID)
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryGeneratedColumn()
     id: string;
 
     @Field()
@@ -18,6 +20,12 @@ export class UserEntity {
 
     @Column()
     password: string;
+
+    @OneToMany(() => UserRoleEntity, (userRole) => userRole.user, { cascade: true })
+    roles: UserRoleEntity[];
+
+    @OneToMany(() => UserPermissionEntity, (userPermission) => userPermission.user, { cascade: true })
+    permissions: UserPermissionEntity[];
 
     @Field()
     @CreateDateColumn()

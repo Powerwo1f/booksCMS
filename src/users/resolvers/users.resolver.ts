@@ -5,6 +5,8 @@ import { CreateUserInput } from "../dto/create-user.input";
 import { UpdateUserInput } from "../dto/update-user.input";
 import { UseGuards } from "@nestjs/common";
 import { GqlAuthGuard } from "../../common/guards/gql-auth.guard";
+import { Permissions } from "../../common/decorators/permissions.decorator";
+import { PermissionsGuard } from "../../common/guards/permissions.guard";
 
 @Resolver(() => UserEntity)
 export class UsersResolver {
@@ -35,7 +37,8 @@ export class UsersResolver {
     }
 
     @Mutation(() => Boolean)
-    @UseGuards(GqlAuthGuard)
+    @UseGuards(GqlAuthGuard, PermissionsGuard)
+    @Permissions("DELETE_USER")
     removeUser(@Args("id", { type: () => ID }) id: string) {
         return this.usersService.remove(id);
     }

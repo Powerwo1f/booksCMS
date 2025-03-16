@@ -10,7 +10,8 @@
     "start:dev": "nest start --watch",
     "migration:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate",
     "migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d src/config/typeorm.datasource.ts",
-    "migration:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d src/config/typeorm.datasource.ts"
+    "migration:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d src/config/typeorm.datasource.ts",
+    "seed": "ts-node src/database/seeds/seed.ts"
   },
   "dependencies": {
     "@nestjs/apollo": "^12.2.2",

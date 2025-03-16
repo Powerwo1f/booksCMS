@@ -7,17 +7,8 @@ import * as bcrypt from "bcrypt";
 export class AuthService {
     constructor(
         private readonly usersService: UsersService,
-        private readonly jwtService: JwtService
+        private readonly jwtService: JwtService,
     ) {}
-
-    async validateUser(email: string, password: string): Promise<any> {
-        const user = await this.usersService.findByEmail(email);
-        if (user && (await bcrypt.compare(password, user.password))) {
-            const { password, ...result } = user;
-            return result;
-        }
-        return null;
-    }
 
     async login(email: string, password: string) {
         const user = await this.usersService.findByEmail(email);
@@ -25,7 +16,12 @@ export class AuthService {
             throw new UnauthorizedException("Invalid credentials");
         }
 
-        const payload = { sub: user.id, email: user.email };
+        const payload = {
+            sub: user.id,
+            email: user.email,
+            permissions: user.permissions.map(perm => perm.name),
+        };
+
         return {
             access_token: this.jwtService.sign(payload),
         };

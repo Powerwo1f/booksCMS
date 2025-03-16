@@ -23,7 +23,10 @@ export class UsersService {
     }
 
     async findByEmail(email: string): Promise<UserEntity> {
-        return this.userRepository.findOneBy({ email });
+        return this.userRepository.findOne({
+            where: { email },
+            relations: ["permissions"] // добавляем связи
+        });
     }
 
     async findAll(): Promise<UserEntity[]> {
