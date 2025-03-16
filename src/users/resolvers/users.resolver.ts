@@ -3,17 +3,21 @@ import { UsersService } from "../services/users.service";
 import { UserEntity } from "../entities/user.entity";
 import { CreateUserInput } from "../dto/create-user.input";
 import { UpdateUserInput } from "../dto/update-user.input";
+import { UseGuards } from "@nestjs/common";
+import { GqlAuthGuard } from "../../common/guards/gql-auth.guard";
 
 @Resolver(() => UserEntity)
 export class UsersResolver {
     constructor(private readonly usersService: UsersService) {}
 
-    @Query(() => [UserEntity], { name: "users" })
+    @Query(() => [UserEntity])
+    @UseGuards(GqlAuthGuard)
     findAll() {
         return this.usersService.findAll();
     }
 
-    @Query(() => UserEntity, { name: "user" })
+    @Query(() => UserEntity)
+    @UseGuards(GqlAuthGuard)
     findOne(@Args("id", { type: () => ID }) id: string) {
         return this.usersService.findOne(id);
     }
@@ -24,13 +28,15 @@ export class UsersResolver {
     }
 
     @Mutation(() => UserEntity)
+    @UseGuards(GqlAuthGuard)
     updateUser(@Args("input") input: UpdateUserInput) {
-        const { id, ...updateData } = input;
-        return this.usersService.update(id, updateData);
+        const { id, ...rest } = input;
+        return this.usersService.update(id, rest);
     }
 
     @Mutation(() => Boolean)
+    @UseGuards(GqlAuthGuard)
     removeUser(@Args("id", { type: () => ID }) id: string) {
-        return this.usersService.remove(id).then(() => true);
+        return this.usersService.remove(id);
     }
 }

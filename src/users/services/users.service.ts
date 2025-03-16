@@ -4,17 +4,26 @@ import { Repository } from "typeorm";
 import { UserEntity } from "../entities/user.entity";
 import { CreateUserInput } from "../dto/create-user.input";
 import { UpdateUserInput } from "../dto/update-user.input";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(UserEntity)
-        private readonly userRepository: Repository<UserEntity>
+        private readonly userRepository: Repository<UserEntity>,
     ) {}
 
     async create(input: CreateUserInput): Promise<UserEntity> {
-        const user = this.userRepository.create(input);
+        const hashedPassword = await bcrypt.hash(input.password, 10);
+        const user = this.userRepository.create({
+            ...input,
+            password: hashedPassword,
+        });
         return this.userRepository.save(user);
+    }
+
+    async findByEmail(email: string): Promise<UserEntity> {
+        return this.userRepository.findOneBy({ email });
     }
 
     async findAll(): Promise<UserEntity[]> {
@@ -31,6 +40,11 @@ export class UsersService {
 
     async update(id: string, input: Partial<UpdateUserInput>): Promise<UserEntity> {
         const user = await this.findOne(id);
+
+        if (input.password) {
+            input.password = await bcrypt.hash(input.password, 10);
+        }
+
         const updatedUser = Object.assign(user, input);
         return this.userRepository.save(updatedUser);
     }
