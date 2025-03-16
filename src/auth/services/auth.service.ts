@@ -19,7 +19,7 @@ export class AuthService {
         const payload = {
             sub: user.id,
             email: user.email,
-            permissions: user.permissions.map(perm => perm.name),
+            permissions: user.permissions.map((perm) => perm.permission.name),
         };
 
         return {

@@ -14,6 +14,7 @@
     "seed": "ts-node src/database/seeds/seed.ts"
   },
   "dependencies": {
+    "@apollo/server": "^4.11.3",
     "@nestjs/apollo": "^12.2.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^4.0.1",
