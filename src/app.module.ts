@@ -6,6 +6,7 @@ import { GraphQLModule } from "@nestjs/graphql";
 import { AuthModule } from "./auth/auth.module";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { ConfigModule } from "@nestjs/config";
+import { BooksModule } from './books/books.module';
 
 @Module({
     imports: [
@@ -21,6 +22,7 @@ import { ConfigModule } from "@nestjs/config";
             debug: true, // по желанию
         }),
         AuthModule,
+        BooksModule,
         // другие модули
     ],
 })
