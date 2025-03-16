@@ -23,6 +23,8 @@ export class PermissionsGuard implements CanActivate {
             return false; // нет пользователя ➜ нет доступа
         }
 
+        console.log(user);
+
         const userPermissions = user.permissions || [];
 
         // Проверяем, есть ли у пользователя хотя бы одно из нужных прав

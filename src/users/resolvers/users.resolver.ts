@@ -13,7 +13,8 @@ export class UsersResolver {
     constructor(private readonly usersService: UsersService) {}
 
     @Query(() => [UserEntity])
-    @UseGuards(GqlAuthGuard)
+    @UseGuards(GqlAuthGuard, PermissionsGuard)
+    @Permissions("READ_USER")
     findAll() {
         return this.usersService.findAll();
     }

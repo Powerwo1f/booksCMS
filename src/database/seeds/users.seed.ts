@@ -7,6 +7,10 @@ import { PermissionEntity } from "../../entities/permission.entity";
 export const seedUsers = async (dataSource: DataSource, roles: RoleEntity[], permissions: PermissionEntity[]) => {
     const userRepo = dataSource.getRepository(UserEntity);
 
+    await userRepo.query(`TRUNCATE TABLE "user_roles" CASCADE`);
+    await userRepo.query(`TRUNCATE TABLE "user_permissions" CASCADE`);
+    await userRepo.query(`TRUNCATE TABLE "users" CASCADE`);
+
     const adminRole = roles.find(role => role.name === "ADMIN");
     const userRole = roles.find(role => role.name === "USER");
 
