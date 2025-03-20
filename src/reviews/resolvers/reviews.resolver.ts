@@ -20,6 +20,7 @@ export class ReviewResolver {
 
     @Query(() => Review, { name: "getReviewById" })
     @UseGuards(GqlAuthGuard) // если нужна авторизация
+    @Permissions("READ_REVIEW") // ✅ пермишен на создание
     async getReviewById(
         @Args("bookId", { type: () => String }) bookId: string,
         @Args("reviewId", { type: () => String }) reviewId: string
@@ -29,21 +30,21 @@ export class ReviewResolver {
 
     @Mutation(() => Review)
     @UseGuards(GqlAuthGuard, PermissionsGuard)
-    @Permissions("review:create") // ✅ пермишен на создание
+    @Permissions("CREATE_REVIEW") // ✅ пермишен на создание
     async createReview(@Args("input") input: CreateReviewInput) {
         return this.reviewService.create(input);
     }
 
     @Mutation(() => Review)
     @UseGuards(GqlAuthGuard, PermissionsGuard)
-    @Permissions("review:update") // ✅ пермишен на обновление
+    @Permissions("UPDATE_REVIEW") // ✅ пермишен на обновление
     async updateReview(@Args("input") input: UpdateReviewInput) {
         return this.reviewService.update(input);
     }
 
     @Mutation(() => Boolean)
     @UseGuards(GqlAuthGuard, PermissionsGuard)
-    @Permissions("review:delete") // ✅ пермишен на удаление
+    @Permissions("DELETE_REVIEW") // ✅ пермишен на удаление
     async deleteReview(
         @Args("bookId", { type: () => String }) bookId: string,
         @Args("reviewId", { type: () => String }) reviewId: string

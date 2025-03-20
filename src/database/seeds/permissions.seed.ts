@@ -19,6 +19,10 @@ export const seedPermissions = async (dataSource: DataSource): Promise<Permissio
         { name: "UPDATE_BOOK" },
         { name: "READ_BOOK" },
         { name: "MANAGE_PERMISSIONS" },
+        { name: "CREATE_REVIEW" },
+        { name: "UPDATE_REVIEW" },
+        { name: "DELETE_REVIEW" },
+        { name: "READ_REVIEW" },
     ];
 
     for (const permission of permissions) {

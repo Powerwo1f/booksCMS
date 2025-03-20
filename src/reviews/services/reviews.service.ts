@@ -20,7 +20,11 @@ export class ReviewsService {
     constructor() {
         const client = new DynamoDBClient({
             region: "local",
-            endpoint: "http://localhost:8000" // Убедись, что совпадает с твоим Dynamo локальным URL
+            endpoint: "http://localhost:8000", // Убедись, что совпадает с твоим Dynamo локальным URL
+            credentials: {
+                accessKeyId: "fakeMyKeyId",
+                secretAccessKey: "fakeSecretAccessKey",
+            },
         });
         this.docClient = DynamoDBDocumentClient.from(client);
     }
