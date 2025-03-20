@@ -8,6 +8,7 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { ConfigModule } from "@nestjs/config";
 import { BooksModule } from './books/books.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { ActivityLogModule } from "./activity-log/activity-log.module";
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { ReviewsModule } from './reviews/reviews.module';
             isGlobal: true,
         }),
         TypeOrmModule.forRoot(typeOrmConfig),
+        ActivityLogModule,
         UsersModule,
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
