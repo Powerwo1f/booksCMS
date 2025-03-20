@@ -7,6 +7,7 @@ import { AuthModule } from "./auth/auth.module";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { ConfigModule } from "@nestjs/config";
 import { BooksModule } from './books/books.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
     imports: [
@@ -23,6 +24,7 @@ import { BooksModule } from './books/books.module';
         }),
         AuthModule,
         BooksModule,
+        ReviewsModule,
         // другие модули
     ],
 })
