@@ -9,12 +9,15 @@ import { ConfigModule } from "@nestjs/config";
 import { BooksModule } from './books/books.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { ActivityLogModule } from "./activity-log/activity-log.module";
+import { PermissionsGuard } from "./common/guards/permissions.guard";
+import { APP_GUARD } from "@nestjs/core";
 
 @Module({
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
         }),
+        ActivityLogModule,
         TypeOrmModule.forRoot(typeOrmConfig),
         ActivityLogModule,
         UsersModule,
@@ -28,6 +31,12 @@ import { ActivityLogModule } from "./activity-log/activity-log.module";
         BooksModule,
         ReviewsModule,
         // другие модули
+    ],
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: PermissionsGuard,
+        },
     ],
 })
 export class AppModule {}

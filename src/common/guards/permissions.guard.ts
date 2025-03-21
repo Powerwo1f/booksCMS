@@ -1,12 +1,16 @@
-import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { GqlExecutionContext } from "@nestjs/graphql";
+import { ActivityLogService } from "../../activity-log/services/activity-log.service";
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-    constructor(private readonly reflector: Reflector) {}
+    constructor(
+        private readonly reflector: Reflector,
+        private readonly activityLogService: ActivityLogService // ВАЖНО: добавляем сервис логов
+    ) {}
 
-    canActivate(context: ExecutionContext): boolean {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
             "permissions",
             [context.getHandler(), context.getClass()]
@@ -17,19 +21,50 @@ export class PermissionsGuard implements CanActivate {
         }
 
         const ctx = GqlExecutionContext.create(context);
-        const user = ctx.getContext().req.user;
+        const req = ctx.getContext().req;
+        const user = req.user;
+
+        console.log("User making request:", user);
 
         if (!user) {
-            return false; // нет пользователя ➜ нет доступа
-        }
+            await this.activityLogService.logActivity({
+                userId: "anonymous",
+                action: "ACCESS_DENIED",
+                entityType: "PERMISSION", // например, указываешь что логируется доступ по пермишенам
+                status: "FORBIDDEN_NO_PERMISSION",
+                executionTimeMs: 0, // если нет времени выполнения - укажи 0 или рассчитай
+            });
 
-        console.log(user);
+            throw new ForbiddenException("No user attached to request");
+        }
 
         const userPermissions = user.permissions || [];
 
-        // Проверяем, есть ли у пользователя хотя бы одно из нужных прав
-        return requiredPermissions.some((permission) =>
+        const hasPermission = requiredPermissions.some((permission) =>
             userPermissions.includes(permission)
         );
+
+        if (!hasPermission) {
+            await this.activityLogService.logActivity({
+                userId: user.id,
+                action: "ACCESS_DENIED",
+                entityType: "PERMISSION", // например, указываешь что логируется доступ по пермишенам
+                status: "FORBIDDEN_NO_PERMISSION",
+                executionTimeMs: 0, // если нет времени выполнения - укажи 0 или рассчитай
+            });
+
+            throw new ForbiddenException("You do not have permission to access this resource");
+        }
+
+        // Можно залогировать успешный доступ, если нужно
+        await this.activityLogService.logActivity({
+            userId: user.id,
+            action: "ACCESS_GRANTED",
+            entityType: "PERMISSION", // например, указываешь что логируется доступ по пермишенам
+            status: "SUCCESS",
+            executionTimeMs: 0, // если нет времени выполнения - укажи 0 или рассчитай
+        });
+
+        return true;
     }
 }
