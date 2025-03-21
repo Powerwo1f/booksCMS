@@ -58,11 +58,15 @@ export class ReviewsService {
 
     async create(input: CreateReviewInput) {
         const reviewId = uuidv4();
+        const now = new Date().toISOString();
+
         const newReview = {
             ...input,
             reviewId,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            createdAt: now,
+            updatedAt: now,
+            moderationStatus: "PENDING", // или APPROVED / REJECTED по бизнес-логике
+            likes: 0 // начальное количество лайков
         };
 
         const command = new PutCommand({
@@ -79,22 +83,32 @@ export class ReviewsService {
         const { bookId, reviewId, ...updateData } = input;
         const now = new Date().toISOString();
 
+        if (!bookId || !reviewId) {
+            throw new Error("bookId and reviewId are required for update");
+        }
+
         const updateExpression = [];
         const expressionAttributeNames = {};
         const expressionAttributeValues = {};
 
+        // Проходимся по полям, исключая любые потенциально запрещенные
         for (const [key, value] of Object.entries(updateData)) {
-            if (value !== undefined) {
+            if (value !== undefined && key !== "bookId" && key !== "reviewId") {
                 updateExpression.push(`#${key} = :${key}`);
                 expressionAttributeNames[`#${key}`] = key;
                 expressionAttributeValues[`:${key}`] = value;
             }
         }
 
-        // всегда обновляем updatedAt
+        // Добавляем updatedAt всегда
         updateExpression.push("#updatedAt = :updatedAt");
         expressionAttributeNames["#updatedAt"] = "updatedAt";
         expressionAttributeValues[":updatedAt"] = now;
+
+        // Проверка на пустой апдейт
+        if (updateExpression.length === 0) {
+            throw new Error("No valid fields provided for update");
+        }
 
         const command = new UpdateCommand({
             TableName: this.tableName,
@@ -106,8 +120,10 @@ export class ReviewsService {
         });
 
         const result = await this.docClient.send(command);
+
         return result.Attributes;
     }
+
 
     async delete(bookId: string, reviewId: string) {
         const command = new DeleteCommand({
