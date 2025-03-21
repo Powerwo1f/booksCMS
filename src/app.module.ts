@@ -11,6 +11,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { ActivityLogModule } from "./activity-log/activity-log.module";
 import { PermissionsGuard } from "./common/guards/permissions.guard";
 import { APP_GUARD } from "@nestjs/core";
+import { GqlAuthGuard } from "./common/guards/gql-auth.guard";
 
 @Module({
     imports: [
@@ -35,7 +36,11 @@ import { APP_GUARD } from "@nestjs/core";
     providers: [
         {
             provide: APP_GUARD,
-            useClass: PermissionsGuard,
+            useClass: GqlAuthGuard, // <- первым идёт аутентификация!
+        },
+        {
+            provide: APP_GUARD,
+            useClass: PermissionsGuard, // <- потом проверка пермишенов!
         },
     ],
 })
