@@ -12,6 +12,7 @@ import { ActivityLogModule } from "./activity-log/activity-log.module";
 import { PermissionsGuard } from "./common/guards/permissions.guard";
 import { APP_GUARD } from "@nestjs/core";
 import { GqlAuthGuard } from "./common/guards/gql-auth.guard";
+import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
     imports: [
@@ -31,6 +32,7 @@ import { GqlAuthGuard } from "./common/guards/gql-auth.guard";
         AuthModule,
         BooksModule,
         ReviewsModule,
+        ScheduleModule.forRoot(),
         // другие модули
     ],
     providers: [
