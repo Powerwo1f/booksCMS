@@ -30,6 +30,10 @@ export class BookEntity {
     @Column()
     publicationYear: number;
 
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    fileUrl?: string; // Presigned URL or path to S3 file
+
     @Field()
     @CreateDateColumn()
     createdAt: Date;

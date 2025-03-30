@@ -20,7 +20,11 @@ export class ActivityLogInterceptor implements NestInterceptor {
         const request = ctx.getRequest ? ctx.getRequest() : gqlCtx?.req;
 
         const user = request?.user || { id: "anonymous" };
-        const ip = request?.ip || "unknown";
+        console.log(request?.headers["x-forwarded-for"]);
+        const ip =
+            request?.headers["x-forwarded-for"]?.split(",")[0].trim() ||
+            request?.socket?.remoteAddress ||
+            "unknown"; // ---
         const userAgent = request?.headers?.["user-agent"] || "unknown";
 
         const correlationId = uuid();

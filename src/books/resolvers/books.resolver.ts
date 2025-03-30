@@ -6,6 +6,7 @@ import { CreateBookInput } from "../dto/create-book.input";
 import { UpdateBookInput } from "../dto/update-book.input";
 import { PermissionsGuard } from "../../common/guards/permissions.guard";
 import { Permissions } from "../../common/decorators/permissions.decorator";
+import { CreateBookResponse } from "../dto/create-book.response";
 
 @Resolver(() => BookEntity)
 export class BooksResolver {
@@ -25,10 +26,10 @@ export class BooksResolver {
         return this.booksService.findOne(id);
     }
 
-    @Mutation(() => BookEntity, { name: "createBook" })
+    @Mutation(() => CreateBookResponse, { name: "createBook" })
     @UseGuards(PermissionsGuard)
     @Permissions("CREATE_BOOK")
-    create(@Args("input") input: CreateBookInput): Promise<BookEntity> {
+    create(@Args("input") input: CreateBookInput): Promise<CreateBookResponse> {
         return this.booksService.create(input);
     }
 
