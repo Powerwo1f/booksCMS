@@ -12,16 +12,16 @@ import { CreateBookResponse } from "../dto/create-book.response";
 export class BooksResolver {
     constructor(private readonly booksService: BooksService) {}
 
-    @Query(() => [BookEntity], { name: "getAllBooks" })
+    @Query(() => [BookEntity], { name: "books" })
     @UseGuards(PermissionsGuard)
-    @Permissions("VIEW_BOOKS")
+    @Permissions("READ_BOOK")
     findAll(): Promise<BookEntity[]> {
         return this.booksService.findAll();
     }
 
-    @Query(() => BookEntity, { name: "getBookById" })
+    @Query(() => BookEntity, { name: "book" })
     @UseGuards(PermissionsGuard)
-    @Permissions("VIEW_BOOKS")
+    @Permissions("READ_BOOK")
     findOne(@Args("id") id: string): Promise<BookEntity> {
         return this.booksService.findOne(id);
     }

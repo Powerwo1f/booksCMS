@@ -5,6 +5,9 @@ import * as path from "path";
 import { AuthHelper } from "../helpers/auth.helper";
 import { createTestApp } from "./setup-2e2";
 import { HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { plainToInstance } from "class-transformer";
+import { BookEntity } from "../../src/books/entities/book.entity";
+import { validateSync } from "class-validator";
 
 describe("BooksResolver (e2e)", () => {
     let app: INestApplication;
@@ -25,6 +28,7 @@ describe("BooksResolver (e2e)", () => {
     describe("createBook and upload file", () => {
         let presignedUrl: string;
         const title = `Тестовая книга ${Date.now()}`;
+        let createdBookId: string;
 
         it("should create a book and return presignedUrl", async () => {
             const mutation = `
@@ -51,7 +55,10 @@ describe("BooksResolver (e2e)", () => {
                 .set("Authorization", `Bearer ${token}`)
                 .send({ query: mutation });
 
-            expect(response.body?.data?.createBook?.book?.title).toBe(title);
+            const book = response.body?.data?.createBook?.book;
+            createdBookId = book.id;
+
+            expect(book?.title).toBe(title);
 
             presignedUrl = response.body?.data?.createBook?.presignedUrl;
             expect(presignedUrl).toBeDefined();
@@ -87,5 +94,92 @@ describe("BooksResolver (e2e)", () => {
             expect(s3Response.$metadata.httpStatusCode).toBe(200);
         });
 
+        it("should return all books", async () => {
+            const query = `
+                query {
+                    books {
+                        id
+                        title
+                        author
+                        description 
+                        publicationYear
+                    }
+                }
+            `;
+
+            const response = await request(app.getHttpServer())
+                .post("/graphql")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ query });
+
+            const books = response.body?.data?.books;
+            expect(Array.isArray(books)).toBe(true);
+
+            for (const rawBook of books) {
+                const instance = plainToInstance(BookEntity, rawBook);
+                const errors = validateSync(instance);
+                expect(errors).toHaveLength(0);
+            }
+        });
+
+        it("should return a single book", async () => {
+            const query = `
+                query {
+                    book(id: "${createdBookId}") {
+                        id
+                        title
+                        author
+                        description 
+                        publicationYear
+                    }
+                }
+            `;
+
+            const response = await request(app.getHttpServer())
+                .post("/graphql")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ query });
+
+            expect(response.body?.data?.book?.id).toBe(createdBookId);
+        });
+
+        it("should update a book", async () => {
+            const newTitle = `Updated Title ${Date.now()}`;
+            const mutation = `
+                mutation {
+                    updateBook(id: "${createdBookId}", input: {
+                        title: "${newTitle}"
+                    }) {
+                        id
+                        title
+                        author
+                        description 
+                        publicationYear
+                    }
+                }
+            `;
+
+            const response = await request(app.getHttpServer())
+                .post("/graphql")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ query: mutation });
+
+            expect(response.body?.data?.updateBook?.title).toBe(newTitle);
+        });
+
+        it("should delete a book", async () => {
+            const mutation = `
+            mutation {
+                deleteBook(id: "${createdBookId}")
+            }
+        `;
+
+            const response = await request(app.getHttpServer())
+                .post("/graphql")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ query: mutation });
+
+            expect(response.body?.data?.deleteBook).toBe(true);
+        });
     });
 });
