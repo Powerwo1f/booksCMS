@@ -21,7 +21,7 @@ export class BookFileScannerService {
         private readonly bookRepo: Repository<BookEntity>
     ) {}
 
-    @Cron("0 */1 * * * *") // каждую минуту (можешь поменять)
+    @Cron("0 */1 * * * *") // каждую минуту
     async scanBooksFiles() {
         this.logger.log("Scanning S3 for book files...");
 
@@ -41,8 +41,16 @@ export class BookFileScannerService {
             if (!match) continue;
 
             const bookId = parseInt(match[1]);
-            const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.eu-north-1.amazonaws.com/${key}`;
 
+            const existingBook = await this.bookRepo.findOneBy({ id: bookId });
+            if (!existingBook) continue;
+
+            if (existingBook.fileUrl) {
+                this.logger.log(`Skipping bookId ${bookId} — fileUrl already exists`);
+                continue;
+            }
+
+            const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.eu-north-1.amazonaws.com/${key}`;
             await this.bookRepo.update(bookId, { fileUrl });
             this.logger.log(`Updated fileUrl for bookId ${bookId}`);
         }
