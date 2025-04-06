@@ -22,7 +22,7 @@ import { GqlThrottlerGuard } from "./common/guards/graphql-throttler.guard";
             throttlers: [
                 {
                     ttl: 60000, // время жизни окна (в миллисекундах)
-                    limit: 1, // кол-во запросов в окно
+                    limit: 10, // кол-во запросов в окно
                     // Это значит: 10 запросов в минуту на 1 IP.
                 },
             ],

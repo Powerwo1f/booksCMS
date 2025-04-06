@@ -27,12 +27,12 @@ describe("Throttler (e2e)", () => {
             "x-forwarded-for": "123.123.123.123",
         };
 
-        // for (let i = 1; i <= 10; i++) {
-        //     const res = await request(app.getHttpServer()).post("/graphql").set(headers).send(query);
-        //
-        //     expect(res.status).toBe(200);
-        //     expect(res.body.data?.login?.access_token).toBeDefined();
-        // }
+        for (let i = 1; i <= 10; i++) {
+            const res = await request(app.getHttpServer()).post("/graphql").set(headers).send(query);
+
+            expect(res.status).toBe(200);
+            expect(res.body.data?.login?.access_token).toBeDefined();
+        }
 
         // 11-й должен быть заблокирован
         const blocked = await request(app.getHttpServer()).post("/graphql").set(headers).send(query);

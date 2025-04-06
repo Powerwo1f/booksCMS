@@ -15,7 +15,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:e2e": "jest --config jest-e2e.json"
+    "test:e2e": "jest test/e2e --testPathIgnorePatterns=throttler.e2e-spec.ts",
+    "test:throttler": "jest test/e2e/throttler.e2e-spec.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.11.3",
