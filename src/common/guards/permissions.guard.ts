@@ -57,13 +57,13 @@ export class PermissionsGuard implements CanActivate {
         }
 
         // Можно залогировать успешный доступ, если нужно
-        await this.activityLogService.logActivity({
-            userId: user.id,
-            action: "ACCESS_GRANTED",
-            entityType: "PERMISSION", // например, указываешь что логируется доступ по пермишенам
-            status: "SUCCESS",
-            executionTimeMs: 0, // если нет времени выполнения - укажи 0 или рассчитай
-        });
+        // await this.activityLogService.logActivity({
+        //     userId: user.id,
+        //     action: "ACCESS_GRANTED",
+        //     entityType: "PERMISSION", // например, указываешь что логируется доступ по пермишенам
+        //     status: "SUCCESS",
+        //     executionTimeMs: 0, // если нет времени выполнения - укажи 0 или рассчитай
+        // });
 
         return true;
     }
