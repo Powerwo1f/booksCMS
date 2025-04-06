@@ -1,8 +1,7 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { AppModule } from "../../src/app.module";
 import { AuthHelper } from "../helpers/auth.helper";
+import { createTestApp } from "./setup-2e2";
 
 describe("BooksResolver (e2e)", () => {
     let app: INestApplication;
@@ -10,12 +9,7 @@ describe("BooksResolver (e2e)", () => {
     let token: string;
 
     beforeAll(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
-
-        app = moduleFixture.createNestApplication();
-        await app.init();
+        app = await createTestApp();
 
         authHelper = new AuthHelper(app);
         token = await authHelper.login();

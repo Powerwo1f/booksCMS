@@ -24,7 +24,7 @@ export class GqlThrottlerGuard extends ThrottlerGuard {
             req.socket?.remoteAddress ||
             "anonymous";
 
-        console.log("Throttler IP =>", ip);
+        // console.log("Throttler IP =>", ip);
         return ip;
     }
 
