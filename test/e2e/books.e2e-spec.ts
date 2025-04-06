@@ -25,7 +25,7 @@ describe("BooksResolver (e2e)", () => {
         await app.close();
     });
 
-    describe("createBook and upload file", () => {
+    describe("Books operations", () => {
         let presignedUrl: string;
         const title = `Тестовая книга ${Date.now()}`;
         let createdBookId: string;

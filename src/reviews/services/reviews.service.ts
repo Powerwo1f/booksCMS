@@ -6,7 +6,7 @@ import {
     QueryCommand,
     PutCommand,
     UpdateCommand,
-    DeleteCommand
+    DeleteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { CreateReviewInput } from "../dto/create-review.input";
 import { UpdateReviewInput } from "../dto/update-review.input";
@@ -34,8 +34,8 @@ export class ReviewsService {
             TableName: this.tableName,
             KeyConditionExpression: "bookId = :bookId",
             ExpressionAttributeValues: {
-                ":bookId": bookId
-            }
+                ":bookId": bookId,
+            },
         });
 
         const result = await this.docClient.send(command);
@@ -45,7 +45,7 @@ export class ReviewsService {
     async findById(bookId: string, reviewId: string) {
         const command = new GetCommand({
             TableName: this.tableName,
-            Key: { bookId, reviewId }
+            Key: { bookId, reviewId },
         });
 
         const result = await this.docClient.send(command);
@@ -66,12 +66,12 @@ export class ReviewsService {
             createdAt: now,
             updatedAt: now,
             moderationStatus: "PENDING", // или APPROVED / REJECTED по бизнес-логике
-            likes: 0 // начальное количество лайков
+            likes: 0, // начальное количество лайков
         };
 
         const command = new PutCommand({
             TableName: this.tableName,
-            Item: newReview
+            Item: newReview,
         });
 
         await this.docClient.send(command);
@@ -116,7 +116,7 @@ export class ReviewsService {
             UpdateExpression: `SET ${updateExpression.join(", ")}`,
             ExpressionAttributeNames: expressionAttributeNames,
             ExpressionAttributeValues: expressionAttributeValues,
-            ReturnValues: "ALL_NEW"
+            ReturnValues: "ALL_NEW",
         });
 
         const result = await this.docClient.send(command);
@@ -124,11 +124,10 @@ export class ReviewsService {
         return result.Attributes;
     }
 
-
     async delete(bookId: string, reviewId: string) {
         const command = new DeleteCommand({
             TableName: this.tableName,
-            Key: { bookId, reviewId }
+            Key: { bookId, reviewId },
         });
 
         await this.docClient.send(command);

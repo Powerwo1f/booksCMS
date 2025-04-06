@@ -12,13 +12,13 @@ import { Permissions } from "../../common/decorators/permissions.decorator";
 export class ReviewResolver {
     constructor(private readonly reviewService: ReviewsService) {}
 
-    @Query(() => [Review], { name: "getReviewsByBook" })
+    @Query(() => [Review], { name: "reviews" })
     @UseGuards(GqlAuthGuard) // только авторизованные могут смотреть
     async getReviewsByBook(@Args("bookId", { type: () => String }) bookId: string) {
         return this.reviewService.findByBookId(bookId);
     }
 
-    @Query(() => Review, { name: "getReviewById" })
+    @Query(() => Review, { name: "review" })
     @UseGuards(GqlAuthGuard) // если нужна авторизация
     @Permissions("READ_REVIEW") // ✅ пермишен на создание
     async getReviewById(
