@@ -20,27 +20,32 @@ describe("BooksResolver (e2e)", () => {
     });
 
     it("should create a book", async () => {
+        const title = `Тестовая книга ${Date.now()}`;
         const mutation = `
             mutation {
                 createBook(input: {
-                    title: "Тестовая книга",
+                    title: "${title}",
                     author: "Автор",
                     description: "Описание",
                     publicationYear: 2024
                 }) {
-                    id
-                    title
+                    book {
+                        id
+                        title
+                        author
+                        description
+                        publicationYear
+                    }
+                    presignedUrl
                 }
             }
-        `;
+    `;
 
         const response = await request(app.getHttpServer())
             .post("/graphql")
             .set("Authorization", `Bearer ${token}`) // <-- Тут подставляем токен
             .send({ query: mutation });
 
-        console.log(response.body);
-
-        expect(response.body.data.createBook.title).toBe("Тестовая книга");
+        expect(response.body?.data?.createBook?.book?.title).toBe(title);
     });
 });
