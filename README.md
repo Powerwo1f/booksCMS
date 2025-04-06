@@ -1,7 +1,7 @@
 ### Migration Commands
 
 ```bash
-npm run migration:generate -- src/database/migrations/CreateAclSchema -d src/config/typeorm.datasource.ts
+npm run migration:generate -- src/database/migrations/InitSchema -d src/config/typeorm.datasource.ts
 ```
 
 Creates a new migration file using TypeORM CLI.

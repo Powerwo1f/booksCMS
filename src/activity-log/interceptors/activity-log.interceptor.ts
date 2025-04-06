@@ -37,7 +37,7 @@ export class ActivityLogInterceptor implements NestInterceptor {
                 const className = context.getClass().name;
 
                 await this.activityLogService.logActivity({
-                    userId: user.id,
+                    userId: user.userId,
                     action: handler,
                     entityType: className,
                     status: "success",

@@ -24,7 +24,7 @@ export class PermissionsGuard implements CanActivate {
         const req = ctx.getContext().req;
         const user = req.user;
 
-        console.log("User making request:", user);
+        // console.log("User making request:", user.userId);
 
         if (!user) {
             await this.activityLogService.logActivity({

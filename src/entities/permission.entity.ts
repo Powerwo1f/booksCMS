@@ -4,7 +4,7 @@ import { UserPermissionEntity } from "./user-permission.entity";
 
 @Entity("permissions")
 export class PermissionEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     id: string;
 
     @Column({ unique: true })

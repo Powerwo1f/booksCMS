@@ -7,7 +7,7 @@ import { UserRoleEntity } from "./user-role.entity";
 @Entity("users")
 export class UserEntity {
     @Field(() => ID)
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     id: string;
 
     @Field()
