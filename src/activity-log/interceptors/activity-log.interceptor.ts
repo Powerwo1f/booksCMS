@@ -14,17 +14,19 @@ export class ActivityLogInterceptor implements NestInterceptor {
 
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         const now = Date.now();
-        const ctx = context.switchToHttp(); // если HTTP
-        const gqlCtx = context.getArgByIndex(2); // если GraphQL
+        const httpCtx = context.switchToHttp();
+        const gqlCtx = context.getArgByIndex?.(2); // GQL context
 
-        const request = ctx.getRequest ? ctx.getRequest() : gqlCtx?.req;
+        const request: any = httpCtx.getRequest?.() || gqlCtx?.req;
 
         const user = request?.user || { id: "anonymous" };
-        console.log(request?.headers["x-forwarded-for"]);
+
         const ip =
-            request?.headers["x-forwarded-for"]?.split(",")[0].trim() ||
-            request?.socket?.remoteAddress ||
-            "unknown"; // ---
+            request.headers?.["x-forwarded-for"]?.split(",")[0].trim() ||
+            request.ip ||
+            request.socket?.remoteAddress ||
+            "anonymous";
+
         const userAgent = request?.headers?.["user-agent"] || "unknown";
 
         const correlationId = uuid();
