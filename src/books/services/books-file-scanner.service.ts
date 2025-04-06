@@ -37,10 +37,10 @@ export class BookFileScannerService {
             const key = item.Key;
             if (!key) continue;
 
-            const match = key.match(/books\/(\d+)\.pdf/);
+            const match = key.match(/books\/([0-9a-fA-F-]{36})\.pdf/); // UUID
             if (!match) continue;
 
-            const bookId = parseInt(match[1]);
+            const bookId = match[1];
 
             const existingBook = await this.bookRepo.findOneBy({ id: bookId });
             if (!existingBook) continue;
@@ -50,7 +50,7 @@ export class BookFileScannerService {
                 continue;
             }
 
-            const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.eu-north-1.amazonaws.com/${key}`;
+            const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
             await this.bookRepo.update(bookId, { fileUrl });
             this.logger.log(`Updated fileUrl for bookId ${bookId}`);
         }

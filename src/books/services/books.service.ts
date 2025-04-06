@@ -31,19 +31,19 @@ export class BooksService {
         return this.bookRepo.find();
     }
 
-    async findOne(id: number): Promise<BookEntity> {
+    async findOne(id: string): Promise<BookEntity> {
         const book = await this.bookRepo.findOne({ where: { id } });
         if (!book) throw new NotFoundException("Book not found");
         return book;
     }
 
-    async update(id: number, updateBookInput: UpdateBookInput): Promise<BookEntity> {
+    async update(id: string, updateBookInput: UpdateBookInput): Promise<BookEntity> {
         const book = await this.findOne(id);
         Object.assign(book, updateBookInput);
         return this.bookRepo.save(book);
     }
 
-    async remove(id: number): Promise<boolean> {
+    async remove(id: string): Promise<boolean> {
         const result = await this.bookRepo.delete(id);
         return result.affected > 0;
     }

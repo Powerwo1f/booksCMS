@@ -22,7 +22,7 @@ export class BooksResolver {
     @Query(() => BookEntity, { name: "getBookById" })
     @UseGuards(PermissionsGuard)
     @Permissions("VIEW_BOOKS")
-    findOne(@Args("id") id: number): Promise<BookEntity> {
+    findOne(@Args("id") id: string): Promise<BookEntity> {
         return this.booksService.findOne(id);
     }
 
@@ -36,14 +36,14 @@ export class BooksResolver {
     @Mutation(() => BookEntity, { name: "updateBook" })
     @UseGuards(PermissionsGuard)
     @Permissions("UPDATE_BOOK")
-    update(@Args("id") id: number, @Args("input") input: UpdateBookInput): Promise<BookEntity> {
+    update(@Args("id") id: string, @Args("input") input: UpdateBookInput): Promise<BookEntity> {
         return this.booksService.update(id, input);
     }
 
     @Mutation(() => Boolean, { name: "deleteBook" })
     @UseGuards(PermissionsGuard)
     @Permissions("DELETE_BOOK")
-    remove(@Args("id") id: number): Promise<boolean> {
+    remove(@Args("id") id: string): Promise<boolean> {
         return this.booksService.remove(id);
     }
 }

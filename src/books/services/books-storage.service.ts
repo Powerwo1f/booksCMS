@@ -12,7 +12,7 @@ export class BooksStorageService {
         },
     });
 
-    async generateUploadUrl(bookId: number): Promise<string> {
+    async generateUploadUrl(bookId: string): Promise<string> {
         const command = new PutObjectCommand({
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: `books/${bookId}.pdf`,
