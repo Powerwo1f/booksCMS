@@ -6,6 +6,7 @@ import {
     UpdateDateColumn,
 } from "typeorm";
 import { ObjectType, Field, ID, Int } from "@nestjs/graphql";
+import { Review } from "../../reviews/models/review.model";
 
 @ObjectType()
 @Entity("books")
@@ -33,6 +34,9 @@ export class BookEntity {
     @Field({ nullable: true })
     @Column({ nullable: true })
     fileUrl?: string; // Presigned URL or path to S3 file
+
+    @Field(() => [Review], { nullable: true })
+    reviews?: Review[];
 
     @Field()
     @CreateDateColumn()

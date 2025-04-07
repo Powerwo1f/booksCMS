@@ -1,5 +1,5 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { BooksService } from "../services/books.service";
 import { BookEntity } from "../entities/book.entity";
 import { CreateBookInput } from "../dto/create-book.input";
@@ -7,16 +7,26 @@ import { UpdateBookInput } from "../dto/update-book.input";
 import { PermissionsGuard } from "../../common/guards/permissions.guard";
 import { Permissions } from "../../common/decorators/permissions.decorator";
 import { CreateBookResponse } from "../dto/create-book.response";
+import { Review } from "../../reviews/models/review.model";
+import { ReviewsService } from "../../reviews/services/reviews.service";
 
 @Resolver(() => BookEntity)
 export class BooksResolver {
-    constructor(private readonly booksService: BooksService) {}
+    constructor(
+        private readonly booksService: BooksService,
+        private readonly reviewService: ReviewsService,
+    ) {}
 
     @Query(() => [BookEntity], { name: "books" })
     @UseGuards(PermissionsGuard)
     @Permissions("READ_BOOK")
     findAll(): Promise<BookEntity[]> {
         return this.booksService.findAll();
+    }
+
+    @ResolveField(() => [Review])
+    async reviews(@Parent() book: BookEntity) {
+        return this.reviewService.findByBookId(book.id);
     }
 
     @Query(() => BookEntity, { name: "book" })
